@@ -21,7 +21,7 @@ class TestViewSet(viewsets.ModelViewSet):
 
 
 def test_drf_put_partial_fails(rf):
-    model = models.TestModel.objects.create(something="test", other="test")
+    obj = models.TestModel.objects.create(something="test", other="test")
 
     data = json.dumps({
         "something": "another",
@@ -37,7 +37,7 @@ def test_drf_put_partial_fails(rf):
     )
 
     view = TestViewSet.as_view({'put': 'update'})
-    response = view(request, pk=model.pk)
+    response = view(request, pk=obj.pk)
     response.render()
 
     assert response.status_code == 400
@@ -48,13 +48,13 @@ def test_json_api_put_partial_success(rf):
     class PartialPutTestViewSet(mixins.PartialPutMixin, TestViewSet):
         pass
 
-    model = models.TestModel.objects.create(something="test", other="test")
+    obj = models.TestModel.objects.create(something="test", other="test")
 
     data = json.dumps({
         "something": "another",
     })
     result_data = {
-        "id": model.pk,
+        "id": obj.pk,
         "something": "another",
         "other": "test",
     }
@@ -66,7 +66,7 @@ def test_json_api_put_partial_success(rf):
     )
 
     view = PartialPutTestViewSet.as_view({'put': 'update'})
-    response = view(request, pk=model.pk)
+    response = view(request, pk=obj.pk)
     response.render()
 
     assert response.status_code == 200
